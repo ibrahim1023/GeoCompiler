@@ -2,7 +2,7 @@
 
 ## Current Phase
 
-Engineering-foundation bootstrap in progress.
+Phase 1 deterministic workflow core awaits independent review.
 
 ## Completed
 
@@ -10,6 +10,11 @@ Engineering-foundation bootstrap in progress.
 - Foundation design approved: native PyQt/PyQGIS dock widget; QGIS Processing
   remains the full model editor.
 - Architecture, interfaces, root agent rules, and typed-IR registry ADR created.
+- TASK-001 implemented: pure-Python Pydantic Workflow IR, JSON serialization,
+  graph invariants, and unit tests.
+- TASK-002 implemented: 18-operation vector-first algorithm registry,
+  deterministic geometry/parameter/CRS compatibility validation, and contract
+  tests.
 
 ## Important Decisions
 
@@ -20,8 +25,8 @@ Engineering-foundation bootstrap in progress.
 
 ## Known Limits and Risks
 
-- No plugin code, package configuration, test runner, CI, or reproducible QGIS
-  runtime exists yet.
+- No PyQGIS plugin, QGIS runtime, UI, provider adapter, CI, type checker,
+  evaluation suite, or reproducible QGIS integration runtime exists yet.
 - Supported QGIS versions and plugin packaging convention remain a bounded
   discovery task before PyQGIS integration.
 
@@ -31,6 +36,8 @@ Engineering-foundation bootstrap in progress.
   contain the required QGIS-native and no-arbitrary-execution constraints.
 - Bootstrap Tasks 2 and 3 verification passed: bounded roles, selective context,
   planned checks, focused skills, and the dependency-aware roadmap are present.
+- Phase 1 deterministic verification passed: Ruff, full pytest suite, and
+  Python compilation. Independent review remains required by `task.md`.
 
 ## Blocker
 
@@ -38,5 +45,6 @@ None.
 
 ## Next Task and Role
 
-Assign `TASK-001` to an implementer: create pure-Python Workflow IR models,
-validation, JSON round-trip tests, and the initial package/test scaffold.
+Assign a reviewer to TASK-001 and TASK-002. On approval, assign TASK-003 to an
+implementer: inspect QGIS project metadata into safe `ProjectContext` artifacts
+and establish a version-pinned QGIS integration test runtime.

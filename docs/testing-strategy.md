@@ -10,8 +10,8 @@ compiler is safe.
 
 | Layer | Purpose | Required | Planned command |
 | --- | --- | --- | --- |
-| Unit and schema | Workflow IR, JSON round trips, patches, graph and parameter validation | Yes | Not established; target `pytest tests/unit -q` after TASK-001 |
-| Contract | Registry definitions, compiler inputs/outputs, provider structured results | Yes | Not established; target `pytest tests/contract -q` |
+| Unit and schema | Workflow IR, JSON round trips, graph and parameter validation | Yes | `python3 -m pytest tests/unit -q` |
+| Contract | Registry definitions and compatibility validation | Yes | `python3 -m pytest tests/contract -q` |
 | PyQGIS integration | Project inspection, CRS/geometry checks, compiler generation | Yes once adapter exists | Not established; target `pytest tests/integration -q` in supported QGIS |
 | Processing workflow | Run generated vector workflows against fixtures | Yes for supported operations | Not established; target `pytest tests/workflow -q` |
 | UI smoke | Dock widget loads and routes approved actions | Required for UI milestones | Not established; target `pytest tests/ui -q` plus manual QGIS smoke test |
@@ -29,12 +29,14 @@ compiler is safe.
 
 ## Local and CI Policy
 
-No test, format, lint, typecheck, build, evaluation, or security command is
-established yet. TASK-001 must add the Python scaffold and record exact commands
-in `AGENTS.md` and this document. Later CI must run deterministic unit and
-contract checks on every change; QGIS integration and workflow tests run where a
-version-pinned runtime is available. UI verification includes manual QGIS
-evidence until a reliable automated harness exists.
+The established local commands are `python3 -m pytest -q`,
+`python3 -m ruff check .`, `python3 -m ruff format --check .`, and
+`python3 -m compileall -q src`. Type checking, packaging builds, evaluations,
+security checks, CI, and a reproducible QGIS runtime are not established yet.
+Later CI must run deterministic unit and contract checks on every change; QGIS
+integration and workflow tests run where a version-pinned runtime is available.
+UI verification includes manual QGIS evidence until a reliable automated harness
+exists.
 
 ## Failure Handling
 

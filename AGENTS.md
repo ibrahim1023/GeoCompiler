@@ -60,11 +60,11 @@ success unless evidence exists.
 
 | Check | Command |
 | --- | --- |
-| Format | Not established |
-| Lint | Not established |
+| Format | `python3 -m ruff format --check .` |
+| Lint | `python3 -m ruff check .` |
 | Typecheck | Not established |
-| Build | Not established |
-| Tests | Not established |
+| Build | `python3 -m compileall -q src` |
+| Tests | `python3 -m pytest -q` |
 | Evaluations | Not established |
 | Security checks | Not established |
 

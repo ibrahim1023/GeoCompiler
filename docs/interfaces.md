@@ -77,7 +77,7 @@ class AlgorithmDefinition:
     qgis_algorithm_id: str
     input_kinds: dict[str, set[str]]
     parameters: dict[str, str]
-    outputs: dict[str, str]
+    output_kinds: dict[str, str]
     requires_projected_crs: bool = False
 
 class QgisCompiler:
@@ -87,6 +87,11 @@ class QgisCompiler:
 The registry is the allow-list. `QgisCompiler` may compile only operations with
 an `AlgorithmDefinition`; it never accepts provider-specific algorithm IDs or
 model-generated QGIS XML as an execution request.
+
+`SpatialContext` supplies deterministic CRS properties keyed by workflow input
+or intermediate-output reference. The Phase 1 registry rejects metric operations
+when a referenced input is explicitly known to use a geographic CRS; the future
+project-context adapter supplies that evidence.
 
 ## Project and Provider Contracts
 
