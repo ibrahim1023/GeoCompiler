@@ -134,3 +134,16 @@ def test_runner_maps_qgis_failure_to_step_and_algorithm() -> None:
         match=r"step buffer_roads \(native:buffer\) failed: invalid geometry",
     ):
         QgisWorkflowRunner(fail).execute(compiled, input_bindings={"roads": "roads-layer"})
+
+
+def test_runner_maps_invalid_field_failure_to_step_and_algorithm() -> None:
+    compiled = QgisCompiler().compile(_workflow(), _context())
+
+    def fail(_: str, __: dict[str, object]) -> dict[str, object]:
+        raise RuntimeError("field does_not_exist was not found")
+
+    with pytest.raises(
+        ExecutionError,
+        match=r"step buffer_roads \(native:buffer\) failed: field does_not_exist was not found",
+    ):
+        QgisWorkflowRunner(fail).execute(compiled, input_bindings={"roads": "roads-layer"})

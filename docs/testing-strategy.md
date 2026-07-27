@@ -39,8 +39,19 @@ The TASK-003 adapter has deterministic fake-project coverage for its privacy and
 normalization boundary. TASK-003/TASK-004 live coverage is collected from
 `tests/integration/test_qgis_vertical_slice.py` only in a QGIS Python runtime;
 it creates an in-memory projected line layer and runs `native:buffer` through
-the approved compiler and runner. An installed QGIS runtime is still required
-to validate that live PyQGIS API contract.
+the approved compiler and runner. The equivalent QGIS 4.2.0 smoke passed on
+2026-07-27. Its cask Python lacks pytest, so the automated integration test
+requires a separately provisioned QGIS test environment.
+
+The supported local smoke command for QGIS 4.2.0 on macOS is:
+
+```sh
+PYTHONHOME=/Applications/QGIS-final-4_2_0.app/Contents/Frameworks \
+PYTHONPATH="$PWD/src:/Applications/QGIS-final-4_2_0.app/Contents/Resources/python3.12/site-packages:/Applications/QGIS-final-4_2_0.app/Contents/Resources/qgis/python/plugins" \
+PROJ_DATA=/Applications/QGIS-final-4_2_0.app/Contents/Resources/qgis/proj \
+QGIS_PREFIX_PATH=/Applications/QGIS-final-4_2_0.app/Contents/Resources \
+/Applications/QGIS-final-4_2_0.app/Contents/MacOS/python3.12 scripts/qgis_vertical_slice_smoke.py
+```
 UI verification includes manual QGIS evidence until a reliable automated harness
 exists.
 

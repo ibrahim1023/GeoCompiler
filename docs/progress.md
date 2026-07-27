@@ -2,9 +2,8 @@
 
 ## Current Phase
 
-Phase 2 TASK-003 is in progress. The deterministic project-context adapter is
-and TASK-004 compiler/runner are implemented; live PyQGIS verification and
-independent review remain pending.
+Phase 2 implementation and live verification are complete; independent review
+of TASK-003 and TASK-004 remains pending.
 
 ## Completed
 
@@ -40,13 +39,12 @@ independent review remain pending.
 
 ## Known Limits and Risks
 
-- No PyQGIS plugin, QGIS runtime, UI, provider adapter, CI, type checker,
-  evaluation suite, or reproducible QGIS integration runtime exists yet.
-- Supported QGIS versions and plugin packaging convention remain a bounded
-  discovery task before PyQGIS integration.
-- On 2026-07-27, `qgis`, `qgis_process`, `import qgis`, and common macOS/local
-  installation locations were unavailable. A live adapter smoke test cannot run
-  until QGIS is installed and version-pinned.
+- No PyQGIS plugin packaging, UI, provider adapter, CI, type checker, or
+  evaluation suite exists yet.
+- QGIS 4.2.0 on macOS is the supported local Phase 2 smoke runtime. Its cask
+  bundles a Pydantic source/core patch mismatch and no pytest package, so the
+  documented smoke script contains a test-only compatibility bootstrap; a
+  packaged plugin must pin its own runtime dependencies.
 
 ## Verification and Review
 
@@ -56,19 +54,18 @@ independent review remain pending.
   planned checks, focused skills, and the dependency-aware roadmap are present.
 - Phase 1 deterministic verification passed: Ruff, full pytest suite, and
   Python compilation. Human review approval was received on 2026-07-27.
-- TASK-003 deterministic verification passed: 23 tests, Ruff, formatting, and
-  Python compilation. Live PyQGIS API verification is blocked by the absent
-  QGIS runtime.
-- TASK-004 deterministic verification passed: 29 tests, Ruff, formatting, and
-  Python compilation. Live QGIS Processing verification remains pending the
-  QGIS installation.
+- Phase 2 deterministic verification passed: 30 tests, 1 expected QGIS-runtime
+  skip, Ruff, formatting, and Python compilation.
+- QGIS 4.2.0 live verification passed on 2026-07-27: the metadata-only adapter
+  inspected an in-memory projected line layer, and the approved
+  `native:buffer` runner returned a valid one-feature output layer.
 
 ## Blocker
 
-No version-pinned QGIS runtime is available for the required TASK-003 live
-integration test and manual smoke test.
+Independent review is required for TASK-003 and TASK-004 before Phase 2 can be
+closed.
 
 ## Next Task and Role
 
-Complete the QGIS 4.2.0 installation, run live TASK-003/TASK-004 integration
-and manual smoke tests, then assign independent reviewers for both tasks.
+Assign an independent reviewer for TASK-003 and TASK-004. On approval, begin
+Phase 3 TASK-005.
