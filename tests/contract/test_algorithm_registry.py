@@ -106,7 +106,10 @@ def test_registry_rejects_unknown_model_output_port() -> None:
     workflow = workflow.model_copy(update={"steps": [step]})
 
     with pytest.raises(CompatibilityError, match="unsupported output port: COMMAND"):
-        default_algorithm_registry().validate(workflow, SpatialContext())
+        default_algorithm_registry().validate(
+            workflow,
+            SpatialContext(projected_references={"roads": True}),
+        )
 
 
 def test_registry_rejects_parameter_with_wrong_kind() -> None:
@@ -168,7 +171,10 @@ def test_registry_validates_workflow_in_dependency_order() -> None:
         outputs={"result": "candidates"},
     )
 
-    default_algorithm_registry().validate(workflow, SpatialContext())
+    default_algorithm_registry().validate(
+        workflow,
+        SpatialContext(projected_references={"roads": True}),
+    )
 
     assert tuple(step.id for step in workflow.steps_in_dependency_order) == (
         "buffer_roads",

@@ -79,10 +79,43 @@ def test_compiler_rejects_unsupported_operations() -> None:
 
 
 def test_compiler_rejects_incompatible_geometry_and_crs() -> None:
-    with pytest.raises(CompatibilityError, match="expects one of"):
+    with pytest.raises(CompatibilityError, match="expects raster; got vector_line"):
         QgisCompiler().compile(_workflow(kind=GeometryKind.RASTER), _context())
     with pytest.raises(CompatibilityError, match="requires a projected CRS"):
         QgisCompiler().compile(_workflow(), _context(projected=False))
+
+
+def test_compiler_requires_known_crs_evidence_and_validates_layer_bindings() -> None:
+    context = _context()
+    context = context.model_copy(
+        update={"layers": [context.layers[0].model_copy(update={"id": "qgis-roads"})]}
+    )
+
+    with pytest.raises(CompilerError, match="bound to unavailable project layer: roads"):
+        QgisCompiler().compile(_workflow(), context)
+    with pytest.raises(CompatibilityError, match="expects vector_line; got vector_polygon"):
+        QgisCompiler().compile(
+            _workflow(),
+            context.model_copy(
+                update={
+                    "layers": [
+                        context.layers[0].model_copy(update={"geometry_kind": "vector_polygon"})
+                    ]
+                }
+            ),
+            input_layer_ids={"roads": "qgis-roads"},
+        )
+    assert (
+        QgisCompiler()
+        .compile(
+            _workflow(),
+            context,
+            input_layer_ids={"roads": "qgis-roads"},
+        )
+        .steps[0]
+        .qgis_algorithm_id
+        == "native:buffer"
+    )
 
 
 def test_runner_resolves_bound_inputs_defaults_and_temporary_outputs() -> None:

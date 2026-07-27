@@ -77,7 +77,11 @@ def main() -> None:
             outputs={"result": "buffered_roads"},
         )
 
-        compiled = QgisCompiler().compile(workflow, context)
+        compiled = QgisCompiler().compile(
+            workflow,
+            context,
+            input_layer_ids={"roads": layer.id()},
+        )
         output = (
             QgisWorkflowRunner()
             .execute(

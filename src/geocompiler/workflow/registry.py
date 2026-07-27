@@ -147,7 +147,7 @@ class AlgorithmRegistry:
         if not definition.requires_projected_crs:
             return
         for reference in step.inputs.values():
-            if projected.get(reference) is False:
+            if projected.get(reference) is not True:
                 raise CompatibilityError(
                     f"step {step.id} operation {definition.operation} requires a projected CRS"
                 )

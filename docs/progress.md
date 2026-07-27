@@ -29,6 +29,9 @@ of TASK-003 and TASK-004 remains pending.
   the approved registry. The runner requires explicit bindings, uses temporary
   outputs, calls only QGIS Processing, and attributes failures to the workflow
   step and approved algorithm.
+- Metric compilation requires an explicit semantic-workflow-input to project-layer
+  binding, which verifies bound geometry and projected CRS evidence before an
+  approved algorithm can run.
 
 ## Important Decisions
 
@@ -54,7 +57,7 @@ of TASK-003 and TASK-004 remains pending.
   planned checks, focused skills, and the dependency-aware roadmap are present.
 - Phase 1 deterministic verification passed: Ruff, full pytest suite, and
   Python compilation. Human review approval was received on 2026-07-27.
-- Phase 2 deterministic verification passed: 30 tests, 1 expected QGIS-runtime
+- Phase 2 deterministic verification passed: 31 tests, 1 expected QGIS-runtime
   skip, Ruff, formatting, and Python compilation.
 - QGIS 4.2.0 live verification passed on 2026-07-27: the metadata-only adapter
   inspected an in-memory projected line layer, and the approved

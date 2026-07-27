@@ -8,9 +8,13 @@ from typing import Any
 from pydantic import BaseModel, ConfigDict, Field, JsonValue
 
 from geocompiler.qgis.context import ProjectContext
-from geocompiler.workflow.errors import CompilerError, ExecutionError
+from geocompiler.workflow.errors import CompatibilityError, CompilerError, ExecutionError
 from geocompiler.workflow.models import ParameterKind, WorkflowIR, value_matches_parameter_kind
-from geocompiler.workflow.registry import AlgorithmRegistry, default_algorithm_registry
+from geocompiler.workflow.registry import (
+    AlgorithmRegistry,
+    SpatialContext,
+    default_algorithm_registry,
+)
 
 
 class CompiledParameter(BaseModel):
@@ -62,10 +66,19 @@ class QgisCompiler:
     def __init__(self, registry: AlgorithmRegistry | None = None) -> None:
         self._registry = registry or default_algorithm_registry()
 
-    def compile(self, workflow: WorkflowIR, context: ProjectContext) -> CompiledWorkflow:
+    def compile(
+        self,
+        workflow: WorkflowIR,
+        context: ProjectContext,
+        *,
+        input_layer_ids: Mapping[str, str] | None = None,
+    ) -> CompiledWorkflow:
         """Validate and map a workflow without importing or executing PyQGIS."""
 
-        self._registry.validate(workflow, context.spatial_context())
+        self._registry.validate(
+            workflow,
+            self._spatial_context(workflow, context, input_layer_ids),
+        )
         return CompiledWorkflow(
             workflow_id=workflow.id,
             input_ids=tuple(input_.id for input_ in workflow.inputs),
@@ -89,6 +102,40 @@ class QgisCompiler:
             ),
             outputs=workflow.outputs,
         )
+
+    @staticmethod
+    def _spatial_context(
+        workflow: WorkflowIR,
+        context: ProjectContext,
+        input_layer_ids: Mapping[str, str] | None,
+    ) -> SpatialContext:
+        layers_by_id = {layer.id: layer for layer in context.layers}
+        bindings = dict(input_layer_ids or {input_.id: input_.id for input_ in workflow.inputs})
+        expected = {input_.id for input_ in workflow.inputs}
+        unknown = set(bindings).difference(expected)
+        if unknown:
+            raise CompilerError(f"unknown workflow input layer binding: {sorted(unknown)[0]}")
+        missing = expected.difference(bindings)
+        if missing:
+            raise CompilerError(f"missing workflow input layer binding: {sorted(missing)[0]}")
+
+        projected_references: dict[str, bool] = {}
+        for input_ in workflow.inputs:
+            layer_id = bindings[input_.id]
+            try:
+                layer = layers_by_id[layer_id]
+            except KeyError as error:
+                raise CompilerError(
+                    f"workflow input {input_.id} is bound to unavailable project layer: {layer_id}"
+                ) from error
+            if layer.geometry_kind != input_.kind.value:
+                raise CompatibilityError(
+                    f"workflow input {input_.id} expects {input_.kind.value}; "
+                    f"got {layer.geometry_kind or layer.kind.value}"
+                )
+            if layer.is_projected is not None:
+                projected_references[input_.id] = layer.is_projected
+        return SpatialContext(projected_references=projected_references)
 
 
 class QgisWorkflowRunner:

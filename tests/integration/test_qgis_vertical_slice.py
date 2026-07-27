@@ -81,7 +81,11 @@ def test_project_context_and_buffer_runner_use_live_qgis_processing() -> None:
         outputs={"result": "buffered_roads"},
     )
 
-    compiled = QgisCompiler().compile(workflow, context)
+    compiled = QgisCompiler().compile(
+        workflow,
+        context,
+        input_layer_ids={"roads": layer.id()},
+    )
     result = QgisWorkflowRunner().execute(compiled, input_bindings={"roads": layer})
 
     output = result.outputs["result"]
