@@ -3,7 +3,8 @@
 ## Current Phase
 
 Phase 2 TASK-003 is in progress. The deterministic project-context adapter is
-implemented; live PyQGIS verification and independent review remain pending.
+and TASK-004 compiler/runner are implemented; live PyQGIS verification and
+independent review remain pending.
 
 ## Completed
 
@@ -25,6 +26,10 @@ implemented; live PyQGIS verification and independent review remain pending.
   explicitly supplied safe Processing-history metadata. It excludes source
   URIs, connection strings, feature values, geometries, coordinates, and raw
   Processing commands.
+- TASK-004 implementation: the compiler maps validated Workflow IR only through
+  the approved registry. The runner requires explicit bindings, uses temporary
+  outputs, calls only QGIS Processing, and attributes failures to the workflow
+  step and approved algorithm.
 
 ## Important Decisions
 
@@ -54,6 +59,9 @@ implemented; live PyQGIS verification and independent review remain pending.
 - TASK-003 deterministic verification passed: 23 tests, Ruff, formatting, and
   Python compilation. Live PyQGIS API verification is blocked by the absent
   QGIS runtime.
+- TASK-004 deterministic verification passed: 29 tests, Ruff, formatting, and
+  Python compilation. Live QGIS Processing verification remains pending the
+  QGIS installation.
 
 ## Blocker
 
@@ -62,5 +70,5 @@ integration test and manual smoke test.
 
 ## Next Task and Role
 
-Provision a version-pinned QGIS runtime, run the TASK-003 live integration and
-manual smoke tests, then assign an independent reviewer for TASK-003.
+Complete the QGIS 4.2.0 installation, run live TASK-003/TASK-004 integration
+and manual smoke tests, then assign independent reviewers for both tasks.

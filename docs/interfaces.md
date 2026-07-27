@@ -95,6 +95,13 @@ The registry is the allow-list. `QgisCompiler` may compile only operations with
 an `AlgorithmDefinition`; it never accepts provider-specific algorithm IDs or
 model-generated QGIS XML as an execution request.
 
+`CompiledWorkflow` retains only registry-resolved algorithm IDs, symbolic input
+and output references, and typed workflow defaults. `QgisWorkflowRunner`
+requires explicit input bindings at execution time, maps every declared output
+to `TEMPORARY_OUTPUT`, and calls only `processing.run`. It rejects unknown or
+missing bindings and parameter overrides, and maps QGIS failures to the
+workflow-step ID and approved algorithm ID.
+
 `SpatialContext` supplies deterministic CRS properties keyed by workflow input
 or intermediate-output reference. The Phase 1 registry rejects metric operations
 when a referenced input is explicitly known to use a geographic CRS; the future

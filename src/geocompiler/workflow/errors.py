@@ -15,3 +15,17 @@ class UnsupportedOperationError(WorkflowError):
 
 class CompatibilityError(WorkflowError):
     """Raised when validated IR is incompatible with an algorithm definition."""
+
+
+class CompilerError(WorkflowError):
+    """Raised when a validated workflow cannot form an executable plan."""
+
+
+class ExecutionError(WorkflowError):
+    """Raised when QGIS Processing fails for a mapped workflow step."""
+
+    def __init__(self, step_id: str, algorithm_id: str, reason: str) -> None:
+        self.step_id = step_id
+        self.algorithm_id = algorithm_id
+        self.reason = reason
+        super().__init__(f"step {step_id} ({algorithm_id}) failed: {reason}")

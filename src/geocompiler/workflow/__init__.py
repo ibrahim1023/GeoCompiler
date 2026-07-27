@@ -2,6 +2,8 @@
 
 from geocompiler.workflow.errors import (
     CompatibilityError,
+    CompilerError,
+    ExecutionError,
     UnsupportedOperationError,
     WorkflowGraphError,
 )
@@ -24,7 +26,9 @@ from geocompiler.workflow.registry import (
 __all__ = [
     "AlgorithmDefinition",
     "AlgorithmRegistry",
+    "CompilerError",
     "CompatibilityError",
+    "ExecutionError",
     "GeometryKind",
     "ParameterDefinition",
     "ParameterKind",
