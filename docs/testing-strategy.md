@@ -35,6 +35,9 @@ The established local commands are `python3 -m pytest -q`,
 security checks, CI, and a reproducible QGIS runtime are not established yet.
 Later CI must run deterministic unit and contract checks on every change; QGIS
 integration and workflow tests run where a version-pinned runtime is available.
+The TASK-003 adapter has deterministic fake-project coverage for its privacy and
+normalization boundary, but an installed QGIS runtime is still required to
+validate the live PyQGIS API contract.
 UI verification includes manual QGIS evidence until a reliable automated harness
 exists.
 

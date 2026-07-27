@@ -117,6 +117,15 @@ class LLMProvider:
 type, CRS, fields, field types, and safe capability summaries. Provider adapters
 must expose whether an external request is being made.
 
+The QGIS adapter exposes supported vector and raster layers only. Each
+`LayerSummary` contains an ID, display name, layer family, optional vector
+geometry kind, CRS auth ID, conservative projected-CRS evidence, field names
+and provider-declared types, and aggregate feature/selection counts. It never
+includes a data-source URI, connection string, feature attribute value,
+geometry, coordinate, or Processing Python command. `ProcessingHistoryEntry`
+contains only an algorithm ID and display title supplied through the safe
+history interface; unknown history records are rejected rather than serialized.
+
 ## Error Contract
 
 | Error kind | Meaning | Required response |

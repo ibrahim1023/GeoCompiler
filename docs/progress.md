@@ -2,7 +2,8 @@
 
 ## Current Phase
 
-Phase 1 deterministic workflow core is complete.
+Phase 2 TASK-003 is in progress. The deterministic project-context adapter is
+implemented; live PyQGIS verification and independent review remain pending.
 
 ## Completed
 
@@ -19,6 +20,11 @@ Phase 1 deterministic workflow core is complete.
   non-serializable Python objects are rejected at schema validation.
 - Workflow steps require at least one input and output; registry validation uses
   topological dependency order rather than serialized step order.
+- TASK-003 implementation: a metadata-only project-context adapter summarizes
+  supported vector/raster layers, field schemas, CRS evidence, selections, and
+  explicitly supplied safe Processing-history metadata. It excludes source
+  URIs, connection strings, feature values, geometries, coordinates, and raw
+  Processing commands.
 
 ## Important Decisions
 
@@ -33,6 +39,9 @@ Phase 1 deterministic workflow core is complete.
   evaluation suite, or reproducible QGIS integration runtime exists yet.
 - Supported QGIS versions and plugin packaging convention remain a bounded
   discovery task before PyQGIS integration.
+- On 2026-07-27, `qgis`, `qgis_process`, `import qgis`, and common macOS/local
+  installation locations were unavailable. A live adapter smoke test cannot run
+  until QGIS is installed and version-pinned.
 
 ## Verification and Review
 
@@ -42,13 +51,16 @@ Phase 1 deterministic workflow core is complete.
   planned checks, focused skills, and the dependency-aware roadmap are present.
 - Phase 1 deterministic verification passed: Ruff, full pytest suite, and
   Python compilation. Human review approval was received on 2026-07-27.
+- TASK-003 deterministic verification passed: 23 tests, Ruff, formatting, and
+  Python compilation. Live PyQGIS API verification is blocked by the absent
+  QGIS runtime.
 
 ## Blocker
 
-None.
+No version-pinned QGIS runtime is available for the required TASK-003 live
+integration test and manual smoke test.
 
 ## Next Task and Role
 
-Assign TASK-003 to an implementer: inspect QGIS project metadata into safe
-`ProjectContext` artifacts and establish a version-pinned QGIS integration test
-runtime.
+Provision a version-pinned QGIS runtime, run the TASK-003 live integration and
+manual smoke tests, then assign an independent reviewer for TASK-003.
