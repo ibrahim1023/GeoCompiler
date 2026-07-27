@@ -47,11 +47,15 @@ class WorkflowIR:
 ```
 
 `WorkflowIR` is a directed acyclic graph. IDs are unique, references resolve,
-declared outputs exist, parameter values match their declared kind and unit,
-and metric operations receive CRS-safe inputs or an explicit reproject step.
+every step declares at least one input and output, parameter values match their
+declared kind and unit, and metric operations receive CRS-safe inputs or an
+explicit reproject step.
 Defaults and step parameters are JSON values only, so a validated IR can always
 cross the provider, persistence, and compiler boundaries without Python object
 serialization.
+
+Steps may be serialized in any order. Consumers must use the validated
+dependency order rather than assuming the list order is executable order.
 
 ## Editing Contract
 

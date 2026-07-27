@@ -129,3 +129,48 @@ def test_registry_requires_projected_crs_for_metric_operation() -> None:
 
     with pytest.raises(CompatibilityError, match="requires a projected CRS"):
         default_algorithm_registry().validate(workflow, context)
+
+
+def test_registry_validates_workflow_in_dependency_order() -> None:
+    workflow = WorkflowIR(
+        schema_version="1.0",
+        id="out-of-order",
+        name="Out of order",
+        inputs=[
+            WorkflowInput(id="parcels", title="Parcels", kind=GeometryKind.POLYGON),
+            WorkflowInput(id="roads", title="Roads", kind=GeometryKind.LINE),
+        ],
+        parameters=[
+            WorkflowParameter(
+                id="distance",
+                title="Distance",
+                kind=ParameterKind.DISTANCE,
+                default=5000,
+                unit="m",
+            )
+        ],
+        steps=[
+            WorkflowStep(
+                id="clip_parcels",
+                operation="clip",
+                inputs={"INPUT": "parcels", "OVERLAY": "road_buffer"},
+                parameters={},
+                outputs={"OUTPUT": "candidates"},
+            ),
+            WorkflowStep(
+                id="buffer_roads",
+                operation="buffer",
+                inputs={"INPUT": "roads"},
+                parameters={"DISTANCE": "$distance"},
+                outputs={"OUTPUT": "road_buffer"},
+            ),
+        ],
+        outputs={"result": "candidates"},
+    )
+
+    default_algorithm_registry().validate(workflow, SpatialContext())
+
+    assert tuple(step.id for step in workflow.steps_in_dependency_order) == (
+        "buffer_roads",
+        "clip_parcels",
+    )

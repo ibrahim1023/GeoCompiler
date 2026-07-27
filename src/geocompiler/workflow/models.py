@@ -67,9 +67,9 @@ class WorkflowStep(BaseModel):
 
     id: str = Field(min_length=1)
     operation: str = Field(min_length=1)
-    inputs: dict[str, str]
+    inputs: dict[str, str] = Field(min_length=1)
     parameters: dict[str, JsonValue]
-    outputs: dict[str, str]
+    outputs: dict[str, str] = Field(min_length=1)
 
 
 class WorkflowIR(BaseModel):

@@ -149,3 +149,23 @@ def test_workflow_rejects_non_json_parameter_values() -> None:
             parameters={"DISTANCE": object()},
             outputs={"OUTPUT": "road_buffer"},
         )
+
+
+def test_workflow_step_requires_inputs_and_outputs() -> None:
+    with pytest.raises(ValidationError):
+        WorkflowStep(
+            id="buffer_roads",
+            operation="buffer",
+            inputs={},
+            parameters={"DISTANCE": "$buffer_distance"},
+            outputs={"OUTPUT": "road_buffer"},
+        )
+
+    with pytest.raises(ValidationError):
+        WorkflowStep(
+            id="buffer_roads",
+            operation="buffer",
+            inputs={"INPUT": "roads"},
+            parameters={"DISTANCE": "$buffer_distance"},
+            outputs={},
+        )

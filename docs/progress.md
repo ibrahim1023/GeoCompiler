@@ -17,6 +17,8 @@ Phase 1 deterministic workflow core awaits independent review.
   tests.
 - Workflow IR defaults and step parameters are constrained to JSON values;
   non-serializable Python objects are rejected at schema validation.
+- Workflow steps require at least one input and output; registry validation uses
+  topological dependency order rather than serialized step order.
 
 ## Important Decisions
 
