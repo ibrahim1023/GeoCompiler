@@ -29,7 +29,8 @@ Engineering-foundation bootstrap in progress.
 
 - Bootstrap Task 1 verification passed: architecture and safety authorities
   contain the required QGIS-native and no-arbitrary-execution constraints.
-- Task 2 documentation is pending verification.
+- Bootstrap Tasks 2 and 3 verification passed: bounded roles, selective context,
+  planned checks, focused skills, and the dependency-aware roadmap are present.
 
 ## Blocker
 
@@ -37,6 +38,5 @@ None.
 
 ## Next Task and Role
 
-Finish the engineering-foundation bootstrap, then assign `TASK-001` to an
-implementer: create pure-Python Workflow IR models, validation, JSON round-trip
-tests, and the initial package/test scaffold.
+Assign `TASK-001` to an implementer: create pure-Python Workflow IR models,
+validation, JSON round-trip tests, and the initial package/test scaffold.
