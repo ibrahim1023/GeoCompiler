@@ -2,7 +2,7 @@
 
 ## Current Phase
 
-Phase 1 deterministic workflow core awaits independent review.
+Phase 1 deterministic workflow core is complete.
 
 ## Completed
 
@@ -41,7 +41,7 @@ Phase 1 deterministic workflow core awaits independent review.
 - Bootstrap Tasks 2 and 3 verification passed: bounded roles, selective context,
   planned checks, focused skills, and the dependency-aware roadmap are present.
 - Phase 1 deterministic verification passed: Ruff, full pytest suite, and
-  Python compilation. Independent review remains required by `task.md`.
+  Python compilation. Human review approval was received on 2026-07-27.
 
 ## Blocker
 
@@ -49,6 +49,6 @@ None.
 
 ## Next Task and Role
 
-Assign a reviewer to TASK-001 and TASK-002. On approval, assign TASK-003 to an
-implementer: inspect QGIS project metadata into safe `ProjectContext` artifacts
-and establish a version-pinned QGIS integration test runtime.
+Assign TASK-003 to an implementer: inspect QGIS project metadata into safe
+`ProjectContext` artifacts and establish a version-pinned QGIS integration test
+runtime.
