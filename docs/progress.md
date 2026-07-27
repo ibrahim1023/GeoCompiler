@@ -2,8 +2,7 @@
 
 ## Current Phase
 
-Phase 2 implementation and live verification are complete; independent review
-of TASK-003 and TASK-004 remains pending.
+Phase 2 is complete. Phase 3 TASK-005 is ready to begin.
 
 ## Completed
 
@@ -62,13 +61,13 @@ of TASK-003 and TASK-004 remains pending.
 - QGIS 4.2.0 live verification passed on 2026-07-27: the metadata-only adapter
   inspected an in-memory projected line layer, and the approved
   `native:buffer` runner returned a valid one-feature output layer.
+- Human review approval for TASK-003 and TASK-004 was received on 2026-07-27.
 
 ## Blocker
 
-Independent review is required for TASK-003 and TASK-004 before Phase 2 can be
-closed.
+None.
 
 ## Next Task and Role
 
-Assign an independent reviewer for TASK-003 and TASK-004. On approval, begin
-Phase 3 TASK-005.
+Assign TASK-005 to an implementer on a new Phase 3 branch: build the native
+PyQt dock widget for workflow proposal inspection and explicit approval.
