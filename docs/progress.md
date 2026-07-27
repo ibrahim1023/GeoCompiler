@@ -15,6 +15,8 @@ Phase 1 deterministic workflow core awaits independent review.
 - TASK-002 implemented: 18-operation vector-first algorithm registry,
   deterministic geometry/parameter/CRS compatibility validation, and contract
   tests.
+- Workflow IR defaults and step parameters are constrained to JSON values;
+  non-serializable Python objects are rejected at schema validation.
 
 ## Important Decisions
 

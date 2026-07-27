@@ -6,7 +6,7 @@ from collections import defaultdict, deque
 from enum import StrEnum
 from typing import Any
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, JsonValue, model_validator
 
 from geocompiler.workflow.errors import WorkflowGraphError
 
@@ -46,7 +46,7 @@ class WorkflowParameter(BaseModel):
     id: str = Field(min_length=1)
     title: str = Field(min_length=1)
     kind: ParameterKind
-    default: Any
+    default: JsonValue
     unit: str | None = None
 
     @model_validator(mode="after")
@@ -68,7 +68,7 @@ class WorkflowStep(BaseModel):
     id: str = Field(min_length=1)
     operation: str = Field(min_length=1)
     inputs: dict[str, str]
-    parameters: dict[str, Any]
+    parameters: dict[str, JsonValue]
     outputs: dict[str, str]
 
 

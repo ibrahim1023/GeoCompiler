@@ -49,6 +49,9 @@ class WorkflowIR:
 `WorkflowIR` is a directed acyclic graph. IDs are unique, references resolve,
 declared outputs exist, parameter values match their declared kind and unit,
 and metric operations receive CRS-safe inputs or an explicit reproject step.
+Defaults and step parameters are JSON values only, so a validated IR can always
+cross the provider, persistence, and compiler boundaries without Python object
+serialization.
 
 ## Editing Contract
 

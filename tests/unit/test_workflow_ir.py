@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import pytest
+from pydantic import ValidationError
 
 from geocompiler.workflow import (
     GeometryKind,
@@ -129,3 +130,22 @@ def test_workflow_rejects_unknown_parameter_reference() -> None:
 
     with pytest.raises(WorkflowGraphError, match="unknown parameter: unknown_parameter"):
         _workflow(steps=[step], outputs={"result": "road_buffer"})
+
+
+def test_workflow_rejects_non_json_parameter_values() -> None:
+    with pytest.raises(ValidationError):
+        WorkflowParameter(
+            id="label",
+            title="Label",
+            kind=ParameterKind.STRING,
+            default=object(),
+        )
+
+    with pytest.raises(ValidationError):
+        WorkflowStep(
+            id="buffer_roads",
+            operation="buffer",
+            inputs={"INPUT": "roads"},
+            parameters={"DISTANCE": object()},
+            outputs={"OUTPUT": "road_buffer"},
+        )
