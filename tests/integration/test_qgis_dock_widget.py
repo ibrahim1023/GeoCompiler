@@ -6,7 +6,7 @@ qgis_pyqt = pytest.importorskip("qgis.PyQt", reason="requires a QGIS PyQt runtim
 
 from geocompiler.plugin import GeoCompilerPlugin  # noqa: E402
 from geocompiler.ui.dock import GeoCompilerDockWidget  # noqa: E402
-from geocompiler.ui.view_model import WorkflowViewModel  # noqa: E402
+from geocompiler.ui.view_model import ExecutionState, WorkflowViewModel  # noqa: E402
 from geocompiler.workflow import GeometryKind, WorkflowInput, WorkflowIR, WorkflowStep  # noqa: E402
 
 QApplication = qgis_pyqt.QtWidgets.QApplication
@@ -62,6 +62,19 @@ def test_dock_renders_workflow_and_requires_approval_before_run() -> None:
     assert ran == ["buffer-roads"]
     assert edited == ["buffer-roads"]
     assert built == ["Buffer roads"]
+    assert dock._view_model.execution_state is ExecutionState.SUCCEEDED
+
+
+def test_dock_maps_build_callback_failure_without_changing_execution_state() -> None:
+    def fail(_: str) -> None:
+        raise RuntimeError("No workflow provider is configured.")
+
+    dock = GeoCompilerDockWidget(WorkflowViewModel(), fail, lambda _: None, lambda _: None)
+    dock._intent.setText("Buffer roads")
+    dock._build_button.click()
+
+    assert dock._status.text() == "No workflow provider is configured."
+    assert dock._view_model.execution_state is ExecutionState.IDLE
 
 
 class _Interface:

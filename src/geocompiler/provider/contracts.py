@@ -29,3 +29,7 @@ class LLMProvider(Protocol):
     """A provider may propose artifacts but never receives execution access."""
 
     def generate(self, request: ProviderRequest) -> ProviderResponse: ...
+
+
+class ProviderError(Exception):
+    """Raised when a provider cannot return a usable proposed artifact."""

@@ -49,6 +49,15 @@ def test_replacement_clears_approval_and_execution_state() -> None:
     assert model.error_message is None
 
 
+def test_status_message_does_not_change_execution_state() -> None:
+    model = WorkflowViewModel()
+    model.set_status_message("No workflow provider is configured.")
+
+    assert model.execution_state is ExecutionState.IDLE
+    assert model.error_message is None
+    assert model.status_message == "No workflow provider is configured."
+
+
 def test_execution_error_is_mapped_without_enabling_execution() -> None:
     model = WorkflowViewModel()
     model.set_proposal(_workflow())
@@ -58,6 +67,17 @@ def test_execution_error_is_mapped_without_enabling_execution() -> None:
 
     assert model.execution_state is ExecutionState.FAILED
     assert model.error_message == "step buffer (native:buffer) failed: invalid geometry"
+    assert model.can_execute is False
+
+
+def test_finished_execution_is_visible() -> None:
+    model = WorkflowViewModel()
+    model.set_proposal(_workflow())
+    model.approve()
+    model.begin_execution()
+    model.finish_execution()
+
+    assert model.execution_state is ExecutionState.SUCCEEDED
     assert model.can_execute is False
 
 

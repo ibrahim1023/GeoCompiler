@@ -52,8 +52,8 @@ Key boundaries:
 | Measure | Current value |
 | --- | --- |
 | Approved vector Processing operations | 18 |
-| Deterministic tests | 43 |
-| Provider response fixtures | 4 across golden, adversarial, and failure sets |
+| Deterministic tests | 47 |
+| Provider response fixtures | 6 across golden, edge, adversarial, failure, and regression sets |
 | Live QGIS runtime validated | QGIS 4.2.0 on macOS |
 | Verified live QGIS paths | `native:buffer` execution and dock/Model Designer lifecycle |
 
@@ -66,6 +66,7 @@ python3 -m pytest -q
 python3 -m ruff check .
 python3 -m ruff format --check .
 python3 -m compileall -q src
+python3 scripts/evaluate_provider_fixtures.py --fixtures tests/fixtures/provider
 ```
 
 The QGIS 4.2.0 macOS smoke command is documented in

@@ -97,7 +97,11 @@ class GeoCompilerDockWidget(QDockWidget):
     def _build_requested(self) -> None:
         intent = self._intent.text().strip()
         if intent:
-            self._on_build(intent)
+            try:
+                self._on_build(intent)
+            except Exception as error:
+                self._view_model.set_status_message(str(error))
+                self._refresh()
 
     def _approve_requested(self) -> None:
         self._view_model.approve()
@@ -111,6 +115,8 @@ class GeoCompilerDockWidget(QDockWidget):
         self._refresh()
         try:
             self._on_run(workflow)
+            self._view_model.finish_execution()
+            self._refresh()
         except Exception as error:
             self._view_model.set_execution_error(str(error))
             self._refresh()
@@ -161,8 +167,8 @@ class GeoCompilerDockWidget(QDockWidget):
             group.addChild(QTreeWidgetItem([name, reference]))
 
     def _status_text(self) -> str:
-        if self._view_model.error_message:
-            return self._view_model.error_message
+        if self._view_model.status_message:
+            return self._view_model.status_message
         if self._view_model.execution_state is ExecutionState.RUNNING:
             return "Running approved workflow"
         if self._view_model.execution_state is ExecutionState.SUCCEEDED:

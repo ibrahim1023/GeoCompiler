@@ -61,6 +61,12 @@ the QGIS Processing Model Designer entry point. Provider response evaluation is
 fixture replay in `tests/fixtures/provider/`, exercised by the unit suite. It
 does not contact a provider, compiler, or QGIS runtime.
 
+Run the provider evaluator directly with:
+
+```sh
+python3 scripts/evaluate_provider_fixtures.py --fixtures tests/fixtures/provider
+```
+
 ## Failure Handling
 
 Do not skip a required test because a QGIS runtime is absent. Mark it blocked,

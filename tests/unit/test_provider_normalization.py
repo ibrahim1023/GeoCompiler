@@ -5,9 +5,13 @@ from pathlib import Path
 import pytest
 
 from geocompiler.provider import (
+    ProviderError,
+    ProviderRequest,
+    ProviderResponse,
     build_provider_request,
     evaluate_fixture_directory,
     parse_provider_response,
+    request_artifact,
 )
 from geocompiler.qgis import LayerKind, LayerSummary, ProjectContext
 from geocompiler.workflow import WorkflowIR, WorkflowPatch
@@ -86,8 +90,35 @@ def test_parse_provider_response_rejects_invalid_or_unsafe_artifacts() -> None:
     unsafe = _workflow_payload() | {"steps": [step | {"operation": "exec"}]}
     with pytest.raises(ValueError, match="unsupported operation"):
         parse_provider_response({"artifact": "workflow", "payload": unsafe})
+    unresolved = _workflow_payload() | {"outputs": {"result": "unknown-output"}}
+    with pytest.raises(ValueError, match="invalid workflow artifact"):
+        parse_provider_response({"artifact": "workflow", "payload": unresolved})
     with pytest.raises(ValueError, match="valid JSON"):
         parse_provider_response("not-json")
+
+    with pytest.raises(ValueError, match="unsupported operation"):
+        parse_provider_response(
+            {
+                "artifact": "patch",
+                "payload": {
+                    "workflow_id": "buffer-roads",
+                    "base_version": "1.0",
+                    "summary": "Run arbitrary code",
+                    "operations": [
+                        {
+                            "type": "insert_step",
+                            "payload": {
+                                "id": "unsafe",
+                                "operation": "exec",
+                                "inputs": {"INPUT": "roads"},
+                                "parameters": {},
+                                "outputs": {"OUTPUT": "result"},
+                            },
+                        }
+                    ],
+                },
+            }
+        )
 
 
 def test_provider_fixture_replay_has_expected_outcomes() -> None:
@@ -95,6 +126,37 @@ def test_provider_fixture_replay_has_expected_outcomes() -> None:
 
     results = evaluate_fixture_directory(fixture_directory)
 
-    assert len(results) == 4
-    assert all(result.passed for result in results)
-    assert {result.category for result in results} == {"golden", "adversarial", "failure"}
+    assert len(results.results) == 6
+    assert results.succeeded
+    assert results.passed == 6
+    assert results.category_totals == {
+        "adversarial": 1,
+        "edge": 1,
+        "failure": 1,
+        "golden": 2,
+        "regression": 1,
+    }
+
+
+class _FailingProvider:
+    def generate(self, _: ProviderRequest) -> ProviderResponse:
+        raise TimeoutError("request timed out")
+
+
+def test_provider_failure_propagates_without_compilation() -> None:
+    request = build_provider_request("Buffer roads", _context())
+
+    with pytest.raises(ProviderError, match="provider request failed: request timed out"):
+        request_artifact(_FailingProvider(), request)
+
+
+class _MalformedProvider:
+    def generate(self, _: ProviderRequest) -> object:
+        return {"artifact": "workflow"}
+
+
+def test_provider_invalid_response_is_mapped_to_provider_error() -> None:
+    request = build_provider_request("Buffer roads", _context())
+
+    with pytest.raises(ProviderError, match="provider returned an invalid artifact"):
+        request_artifact(_MalformedProvider(), request)  # type: ignore[arg-type]

@@ -43,12 +43,10 @@ class GeoCompilerPlugin:
         self.dock = None
 
     def _build_requested(self, _: str) -> None:
-        if self.dock is not None:
-            self.dock.set_execution_error("No workflow provider is configured.")
+        raise RuntimeError("No workflow provider is configured.")
 
     def _run_requested(self, _: WorkflowIR) -> None:
-        if self.dock is not None:
-            self.dock.set_execution_error("Execution orchestration is not configured.")
+        raise RuntimeError("Execution orchestration is not configured.")
 
     def _edit_requested(self, _: WorkflowIR) -> None:
         try:

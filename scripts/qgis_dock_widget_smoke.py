@@ -45,6 +45,10 @@ def main() -> None:
         plugin.initGui()
         assert plugin.dock is not None
         assert iface.added == [plugin.dock]
+        plugin.dock._intent.setText("Buffer roads")
+        plugin.dock._build_button.click()
+        assert plugin.dock._view_model.error_message is None
+        assert plugin.dock._view_model.status_message == "No workflow provider is configured."
         workflow = WorkflowIR(
             schema_version="1.0",
             id="buffer-roads",
@@ -66,8 +70,10 @@ def main() -> None:
         assert plugin.dock._run_button.isEnabled() is False
         plugin.dock._approve_button.click()
         assert plugin.dock._run_button.isEnabled() is True
+        plugin.dock._run_button.click()
+        assert plugin.dock._view_model.error_message == "Execution orchestration is not configured."
         plugin.dock._edit_button.click()
-        assert plugin.dock._view_model.error_message is None
+        assert plugin.dock._view_model.error_message == "Execution orchestration is not configured."
         plugin.unload()
         assert iface.removed == iface.added
         print("QGIS dock widget smoke test passed")
