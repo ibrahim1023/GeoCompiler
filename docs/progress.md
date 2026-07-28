@@ -2,8 +2,8 @@
 
 ## Current Phase
 
-Phase 5 portable runtime and package verification is complete and awaiting
-review approval.
+Phase 5 is accepted. Phase 6 local Ollama integration and controlled dock
+orchestration is ready to begin.
 
 ## Completed
 
@@ -102,6 +102,7 @@ review approval.
 - Phase 5 archive validation passed on 2026-07-28 for the 86 KB
   `geocompiler-0.1.0.zip`; it contains metadata, plugin factory, GPL license,
   icon, README, and source only.
+- Phase 5 review approval for TASK-008 and TASK-009 was received on 2026-07-28.
 
 ## Blocker
 
@@ -111,7 +112,6 @@ configured. This is a bounded product follow-up, not a safety bypass.
 
 ## Next Task and Role
 
-Review the Phase 5 report. If accepted, begin TASK-010 and TASK-011 on a new
-Phase 6 branch: connect the configured local Ollama provider and controlled dock
-orchestration. Do not claim a connected intent-to-output path until their
-live-QGIS verification passes.
+Implement TASK-010 and TASK-011: connect the configured local Ollama provider
+and controlled dock orchestration. Do not claim a connected intent-to-output
+path until their live-QGIS verification passes.
