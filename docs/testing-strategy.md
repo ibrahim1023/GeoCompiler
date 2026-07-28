@@ -14,7 +14,7 @@ compiler is safe.
 | Contract | Registry definitions and compatibility validation | Yes | `python3 -m pytest tests/contract -q` |
 | PyQGIS integration | Project inspection, CRS/geometry checks, compiler generation | Yes once adapter exists | Not established; target `pytest tests/integration -q` in supported QGIS |
 | Processing workflow | Run generated vector workflows against fixtures | Yes for supported operations | Not established; target `pytest tests/workflow -q` |
-| UI smoke | Dock widget loads and routes approved actions | Required for UI milestones | Not established; target `pytest tests/ui -q` plus manual QGIS smoke test |
+| UI smoke | Dock widget loads, approval gates execution, and opens Model Designer | Required for UI milestones | `scripts/qgis_dock_widget_smoke.py` in the supported QGIS runtime |
 | Security/privacy | Provider payload minimization and blocked arbitrary execution | Yes | Not established; target `pytest tests/security -q` |
 | End-to-end | Intent to approved executable workflow | Required before release | Not established; target documented QGIS fixture run |
 
@@ -54,6 +54,18 @@ QGIS_PREFIX_PATH=/Applications/QGIS-final-4_2_0.app/Contents/Resources \
 ```
 UI verification includes manual QGIS evidence until a reliable automated harness
 exists.
+
+The same environment runs `scripts/qgis_dock_widget_smoke.py` with
+`QT_QPA_PLATFORM=offscreen`; it verifies dock lifecycle, explicit approval, and
+the QGIS Processing Model Designer entry point. Provider response evaluation is
+fixture replay in `tests/fixtures/provider/`, exercised by the unit suite. It
+does not contact a provider, compiler, or QGIS runtime.
+
+Run the provider evaluator directly with:
+
+```sh
+python3 scripts/evaluate_provider_fixtures.py --fixtures tests/fixtures/provider
+```
 
 ## Failure Handling
 

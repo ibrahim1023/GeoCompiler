@@ -119,8 +119,11 @@ class ProjectContext:
     processing_history: list[ProcessingHistoryEntry]
 
 class LLMProvider:
-    def generate_workflow(self, intent: str, context: ProjectContext) -> WorkflowIR: ...
-    def modify_workflow(self, instruction: str, workflow: WorkflowIR, context: ProjectContext) -> WorkflowPatch: ...
+    def generate(self, request: ProviderRequest) -> ProviderResponse: ...
+
+def request_artifact(
+    provider: LLMProvider, request: ProviderRequest
+) -> WorkflowIR | WorkflowPatch: ...
 ```
 
 `ProjectContext` contains metadata only by default: layer identity, geometry
@@ -135,6 +138,9 @@ includes a data-source URI, connection string, feature attribute value,
 geometry, coordinate, or Processing Python command. `ProcessingHistoryEntry`
 contains only an algorithm ID and display title supplied through the safe
 history interface; unknown history records are rejected rather than serialized.
+`request_artifact` is a provider boundary only: it validates the returned
+envelope and raises `ProviderError` for provider failures. It imports neither
+the compiler nor the runner and cannot execute a workflow.
 
 ## Error Contract
 

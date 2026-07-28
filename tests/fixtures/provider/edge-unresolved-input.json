@@ -1,0 +1,17 @@
+{
+  "name": "edge unresolved workflow input",
+  "category": "edge",
+  "expected": "reject",
+  "response": {
+    "artifact": "workflow",
+    "payload": {
+      "schema_version": "1.0",
+      "id": "missing-input",
+      "name": "Missing input",
+      "inputs": [{"id": "roads", "title": "Roads", "kind": "vector_line"}],
+      "parameters": [],
+      "steps": [{"id": "buffer", "operation": "buffer", "inputs": {"INPUT": "unknown-layer"}, "parameters": {"DISTANCE": 500}, "outputs": {"OUTPUT": "buffered_roads"}}],
+      "outputs": {"result": "buffered_roads"}
+    }
+  }
+}

@@ -33,7 +33,10 @@ semantic completeness only when multiple workflow shapes are valid.
 Record pass rate by case category, schema failure rate, unsupported-operation
 rate, request latency, response latency, token usage, and cost where an external
 provider call is made. Provider calls are not performed by default in local
-tests; fixture replay is the baseline.
+tests; fixture replay is the baseline. The current baseline has six recorded
+responses: two golden artifacts (one Workflow IR and one Workflow Patch), plus
+edge, adversarial, failure, and regression rejections. All are replayed
+deterministically by the unit suite and the fixture-evaluation command.
 
 ## Threshold Ownership
 

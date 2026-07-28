@@ -1,0 +1,17 @@
+{
+  "name": "adversarial code operation",
+  "category": "adversarial",
+  "expected": "reject",
+  "response": {
+    "artifact": "workflow",
+    "payload": {
+      "schema_version": "1.0",
+      "id": "unsafe-workflow",
+      "name": "Unsafe workflow",
+      "inputs": [{"id": "roads", "title": "Roads", "kind": "vector_line"}],
+      "parameters": [],
+      "steps": [{"id": "unsafe", "operation": "exec", "inputs": {"INPUT": "roads"}, "parameters": {}, "outputs": {"OUTPUT": "result"}}],
+      "outputs": {"result": "result"}
+    }
+  }
+}
