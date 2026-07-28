@@ -2,7 +2,8 @@
 
 ## Current Phase
 
-Phase 3 is complete. Phase 4 TASK-007 is ready for independent verification.
+Phase 4 verification is accepted. Phase 5 packaging and portable-runtime work is
+ready to begin.
 
 ## Completed
 
@@ -80,13 +81,22 @@ Phase 3 is complete. Phase 4 TASK-007 is ready for independent verification.
   verified with `scripts/qgis_dock_widget_smoke.py`.
 - Independent review approval for TASK-005 and TASK-006 was received on
   2026-07-28.
+- Phase 4 narrow vertical-slice verification passed its deterministic, QGIS,
+  privacy, and registry-boundary checks on 2026-07-28. The verifier report
+  records a no-go for the connected dock flow because no provider or execution
+  orchestration is configured.
+- Phase 4 verifier report was accepted on 2026-07-28. Its connected-flow no-go
+  remains open and is the bounded implementation target for Phase 6.
 
 ## Blocker
 
-None.
+The connected user-facing intent-to-output path is unavailable: the dock
+transparently reports that no workflow provider or execution orchestration is
+configured. This is a bounded product follow-up, not a safety bypass.
 
 ## Next Task and Role
 
-Assign TASK-007 to an independent verifier. Inspect the Phase 3 diff and run
-the documented deterministic suite, provider fixture evaluator, and QGIS smoke
-tests before expanding scope.
+Implement TASK-008 and TASK-009: remove runtime Pydantic dependencies and build
+a repository-compliant QGIS plugin archive that installs without Python package
+installation. Do not claim a connected intent-to-output path until TASK-010 and
+TASK-011 have passed live-QGIS verification.
