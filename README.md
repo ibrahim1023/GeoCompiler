@@ -43,16 +43,20 @@ Key boundaries:
 
 - Python 3.12+
 - QGIS and PyQGIS, with PyQt supplied by the QGIS runtime
-- Pydantic for typed, JSON-safe workflow artifacts
+- Frozen standard-library dataclasses with deterministic JSON validation and
+  JSON Schema output for provider artifacts
 - QGIS Processing for spatial execution
 - pytest and Ruff for deterministic verification
+
+Ollama is an external local dependency for the planned connected workflow
+provider. It is not bundled in the QGIS plugin archive.
 
 ## Metrics
 
 | Measure | Current value |
 | --- | --- |
 | Approved vector Processing operations | 18 |
-| Deterministic tests | 47 |
+| Deterministic tests | 48 |
 | Provider response fixtures | 6 across golden, edge, adversarial, failure, and regression sets |
 | Live QGIS runtime validated | QGIS 4.2.0 on macOS |
 | Verified live QGIS paths | `native:buffer` execution and dock/Model Designer lifecycle |

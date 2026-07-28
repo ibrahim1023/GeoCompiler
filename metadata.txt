@@ -1,0 +1,16 @@
+[general]
+name=GeoCompiler
+description=Turn spatial-analysis intent into reusable QGIS Processing workflows.
+version=0.1.0
+qgisMinimumVersion=4.2
+author=Ibrahim Arshad
+email=ibrahim_arshad@outlook.com
+about=GeoCompiler proposes validated workflow artifacts. QGIS Processing executes only approved algorithms after explicit user approval.
+category=Analysis
+icon=icon.svg
+homepage=https://github.com/ibrahim1023/GeoCompiler
+repository=https://github.com/ibrahim1023/GeoCompiler
+tracker=https://github.com/ibrahim1023/GeoCompiler/issues
+tags=processing,workflow,analysis,ollama,ai
+experimental=True
+deprecated=False

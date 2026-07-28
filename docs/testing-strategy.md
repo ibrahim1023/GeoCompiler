@@ -33,6 +33,16 @@ The established local commands are `python3 -m pytest -q`,
 `python3 -m ruff check .`, `python3 -m ruff format --check .`, and
 `python3 -m compileall -q src`. Type checking, packaging builds, evaluations,
 security checks, CI, and a reproducible QGIS runtime are not established yet.
+The Phase 5 plugin archive is built and checked with:
+
+```sh
+python3 scripts/build_plugin_archive.py
+python3 scripts/validate_plugin_archive.py dist/geocompiler-0.1.0.zip
+```
+
+It contains the `geocompiler` plugin root, metadata, GPL-3.0 license, icon,
+and user README, while excluding Python dependencies, tests, caches, and
+development-only files.
 Later CI must run deterministic unit and contract checks on every change; QGIS
 integration and workflow tests run where a version-pinned runtime is available.
 The TASK-003 adapter has deterministic fake-project coverage for its privacy and
