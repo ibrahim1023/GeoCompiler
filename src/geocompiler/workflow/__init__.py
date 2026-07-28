@@ -5,6 +5,7 @@ from geocompiler.workflow.errors import (
     CompilerError,
     ExecutionError,
     UnsupportedOperationError,
+    WorkflowError,
     WorkflowGraphError,
 )
 from geocompiler.workflow.models import (
@@ -15,6 +16,7 @@ from geocompiler.workflow.models import (
     WorkflowParameter,
     WorkflowStep,
 )
+from geocompiler.workflow.patches import PatchOperation, PatchResult, WorkflowPatch, apply_patch
 from geocompiler.workflow.registry import (
     AlgorithmDefinition,
     AlgorithmRegistry,
@@ -35,9 +37,14 @@ __all__ = [
     "SpatialContext",
     "UnsupportedOperationError",
     "WorkflowGraphError",
+    "WorkflowError",
     "WorkflowIR",
     "WorkflowInput",
     "WorkflowParameter",
     "WorkflowStep",
+    "PatchOperation",
+    "PatchResult",
+    "WorkflowPatch",
+    "apply_patch",
     "default_algorithm_registry",
 ]
