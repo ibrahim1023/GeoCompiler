@@ -2,7 +2,7 @@
 
 ## Current Phase
 
-Phase 3 implementation is complete and awaiting independent review approval.
+Phase 3 is complete. Phase 4 TASK-007 is ready for independent verification.
 
 ## Completed
 
@@ -78,6 +78,8 @@ Phase 3 implementation is complete and awaiting independent review approval.
 - QGIS 4.2.0 dock smoke passed on 2026-07-28: plugin lifecycle, workflow
   approval gate, and QGIS Processing Model Designer launch/cleanup were
   verified with `scripts/qgis_dock_widget_smoke.py`.
+- Independent review approval for TASK-005 and TASK-006 was received on
+  2026-07-28.
 
 ## Blocker
 
@@ -85,5 +87,6 @@ None.
 
 ## Next Task and Role
 
-Request independent review for TASK-005 and TASK-006. After approval, merge the
-tested Phase 3 branch into `development`; leave `main` unchanged.
+Assign TASK-007 to an independent verifier. Inspect the Phase 3 diff and run
+the documented deterministic suite, provider fixture evaluator, and QGIS smoke
+tests before expanding scope.
