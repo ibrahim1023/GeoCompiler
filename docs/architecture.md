@@ -29,7 +29,7 @@ interfaces, and a standalone application are out of scope.
 flowchart LR
     A[User intent] --> B[Provider request with project metadata]
     B --> C[Structured Workflow IR or Patch]
-    C --> D[Pydantic schema validation]
+    C --> D[Deterministic artifact validation]
     D --> E[Workflow graph and semantic validation]
     E --> F[Approved algorithm registry]
     F --> G[QGIS Processing model and execution]

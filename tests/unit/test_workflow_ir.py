@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import pytest
-from pydantic import ValidationError
 
 from geocompiler.workflow import (
     GeometryKind,
@@ -12,6 +11,7 @@ from geocompiler.workflow import (
     WorkflowParameter,
     WorkflowStep,
 )
+from geocompiler.workflow.serialization import ArtifactValidationError
 
 
 def _workflow(**overrides: object) -> WorkflowIR:
@@ -133,7 +133,7 @@ def test_workflow_rejects_unknown_parameter_reference() -> None:
 
 
 def test_workflow_rejects_non_json_parameter_values() -> None:
-    with pytest.raises(ValidationError):
+    with pytest.raises(ArtifactValidationError):
         WorkflowParameter(
             id="label",
             title="Label",
@@ -141,7 +141,7 @@ def test_workflow_rejects_non_json_parameter_values() -> None:
             default=object(),
         )
 
-    with pytest.raises(ValidationError):
+    with pytest.raises(ArtifactValidationError):
         WorkflowStep(
             id="buffer_roads",
             operation="buffer",
@@ -152,7 +152,7 @@ def test_workflow_rejects_non_json_parameter_values() -> None:
 
 
 def test_workflow_step_requires_inputs_and_outputs() -> None:
-    with pytest.raises(ValidationError):
+    with pytest.raises(ArtifactValidationError):
         WorkflowStep(
             id="buffer_roads",
             operation="buffer",
@@ -161,7 +161,7 @@ def test_workflow_step_requires_inputs_and_outputs() -> None:
             outputs={"OUTPUT": "road_buffer"},
         )
 
-    with pytest.raises(ValidationError):
+    with pytest.raises(ArtifactValidationError):
         WorkflowStep(
             id="buffer_roads",
             operation="buffer",

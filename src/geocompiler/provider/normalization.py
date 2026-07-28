@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from pydantic import ValidationError
-
 from geocompiler.provider.contracts import (
     LLMProvider,
     ProviderError,
@@ -15,12 +13,13 @@ from geocompiler.workflow.errors import WorkflowError
 from geocompiler.workflow.models import WorkflowIR, WorkflowParameter, WorkflowStep
 from geocompiler.workflow.patches import PatchOperation, WorkflowPatch
 from geocompiler.workflow.registry import default_algorithm_registry
+from geocompiler.workflow.serialization import ArtifactValidationError
 
 
 def build_provider_request(intent: str, context: ProjectContext) -> ProviderRequest:
     """Serialize only the existing metadata-only ProjectContext contract."""
 
-    return ProviderRequest(intent=intent, context=context.model_dump(mode="json"))
+    return ProviderRequest(intent=intent, context=context.to_dict())
 
 
 def parse_provider_response(payload: str | dict[str, object]) -> WorkflowIR | WorkflowPatch:
@@ -32,7 +31,7 @@ def parse_provider_response(payload: str | dict[str, object]) -> WorkflowIR | Wo
             if isinstance(payload, str)
             else ProviderResponse.model_validate(payload)
         )
-    except ValidationError as error:
+    except ArtifactValidationError as error:
         raise ValueError(f"invalid provider response: {error}") from error
 
     try:
@@ -41,7 +40,7 @@ def parse_provider_response(payload: str | dict[str, object]) -> WorkflowIR | Wo
             _validate_provider_patch(patch)
             return patch
         workflow = WorkflowIR.model_validate(response.payload)
-    except (ValidationError, WorkflowError) as error:
+    except (ArtifactValidationError, WorkflowError) as error:
         raise ValueError(f"invalid {response.artifact} artifact: {error}") from error
 
     registry = default_algorithm_registry()
@@ -88,7 +87,7 @@ def _require_target(operation: PatchOperation) -> None:
 def _validate_update_payload(
     operation: PatchOperation, model_type: type[WorkflowParameter] | type[WorkflowStep]
 ) -> None:
-    unknown_keys = set(operation.payload).difference(model_type.model_fields)
+    unknown_keys = set(operation.payload).difference(_artifact_field_names(model_type))
     if unknown_keys:
         unknown = ", ".join(sorted(unknown_keys))
         raise ValueError(f"{operation.type} operation has unsupported fields: {unknown}")
@@ -102,6 +101,14 @@ def request_artifact(provider: LLMProvider, request: ProviderRequest) -> Workflo
     except Exception as error:
         raise ProviderError(f"provider request failed: {error}") from error
     try:
-        return parse_provider_response(response.model_dump(mode="json"))
+        return parse_provider_response(response.to_dict())
     except (AttributeError, ValueError) as error:
         raise ProviderError(f"provider returned an invalid artifact: {error}") from error
+
+
+def _artifact_field_names(
+    model_type: type[WorkflowParameter] | type[WorkflowStep],
+) -> frozenset[str]:
+    if model_type is WorkflowParameter:
+        return frozenset({"id", "title", "kind", "default", "unit"})
+    return frozenset({"id", "operation", "inputs", "parameters", "outputs"})

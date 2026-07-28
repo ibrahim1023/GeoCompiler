@@ -11,7 +11,8 @@
 
 ## Workflow Domain
 
-The first implementation defines these Pydantic-compatible models. The field
+The current implementation defines frozen standard-library dataclasses with
+explicit deterministic parsers and JSON codecs. The field
 names are stable internal contracts; version changes require an ADR or a
 contract-migration task.
 

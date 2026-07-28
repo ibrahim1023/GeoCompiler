@@ -11,6 +11,7 @@ from geocompiler.provider import (
     build_provider_request,
     evaluate_fixture_directory,
     parse_provider_response,
+    provider_response_schema,
     request_artifact,
 )
 from geocompiler.qgis import LayerKind, LayerSummary, ProjectContext
@@ -61,6 +62,14 @@ def test_provider_request_contains_only_safe_project_metadata() -> None:
     assert "source" not in serialized
     assert "coordinates" not in serialized
     assert "connection" not in serialized
+
+
+def test_provider_response_schema_is_strict() -> None:
+    schema = provider_response_schema()
+
+    assert schema["additionalProperties"] is False
+    assert schema["required"] == ["artifact", "payload"]
+    assert schema["properties"]["artifact"] == {"enum": ["workflow", "patch"]}
 
 
 def test_parse_provider_response_returns_valid_workflow_or_patch() -> None:

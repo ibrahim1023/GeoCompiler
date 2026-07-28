@@ -7,9 +7,7 @@ name = "geocompiler"
 version = "0.1.0"
 description = "Typed workflow core for the GeoCompiler QGIS plugin"
 requires-python = ">=3.12"
-dependencies = [
-  "pydantic>=2.11,<3",
-]
+dependencies = []
 
 [project.optional-dependencies]
 dev = [
