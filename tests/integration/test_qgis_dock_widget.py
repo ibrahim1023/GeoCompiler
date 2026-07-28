@@ -4,11 +4,13 @@ import pytest
 
 qgis_pyqt = pytest.importorskip("qgis.PyQt", reason="requires a QGIS PyQt runtime")
 
+from geocompiler.plugin import GeoCompilerPlugin  # noqa: E402
 from geocompiler.ui.dock import GeoCompilerDockWidget  # noqa: E402
 from geocompiler.ui.view_model import WorkflowViewModel  # noqa: E402
 from geocompiler.workflow import GeometryKind, WorkflowInput, WorkflowIR, WorkflowStep  # noqa: E402
 
 QApplication = qgis_pyqt.QtWidgets.QApplication
+QMainWindow = qgis_pyqt.QtWidgets.QMainWindow
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -60,3 +62,33 @@ def test_dock_renders_workflow_and_requires_approval_before_run() -> None:
     assert ran == ["buffer-roads"]
     assert edited == ["buffer-roads"]
     assert built == ["Buffer roads"]
+
+
+class _Interface:
+    def __init__(self) -> None:
+        self.window = QMainWindow()
+        self.added: list[object] = []
+        self.removed: list[object] = []
+
+    def mainWindow(self) -> object:
+        return self.window
+
+    def addDockWidget(self, _: object, dock: object) -> None:
+        self.added.append(dock)
+
+    def removeDockWidget(self, dock: object) -> None:
+        self.removed.append(dock)
+
+
+def test_plugin_owns_a_single_dock_and_unloads_it() -> None:
+    iface = _Interface()
+    plugin = GeoCompilerPlugin(iface)
+
+    plugin.initGui()
+    plugin.initGui()
+
+    assert plugin.dock is not None
+    assert iface.added == [plugin.dock]
+    plugin.unload()
+    assert iface.removed == iface.added
+    assert plugin.dock is None

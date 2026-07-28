@@ -17,6 +17,12 @@ QGIS performs spatial execution through an approved algorithm registry.
   through QGIS Processing with explicit layer bindings and temporary outputs.
 - Requires projected-CRS evidence for metric operations and maps Processing
   failures to the affected workflow step and approved algorithm.
+- Provides a native QGIS dock for intent entry, structured workflow inspection,
+  explicit approval before execution, and access to the QGIS Processing Model
+  Designer.
+- Accepts only strict, metadata-safe provider responses containing a Workflow IR
+  or atomic Workflow Patch; unsupported operations and arbitrary-code-shaped
+  payloads are rejected before compilation.
 
 ## Architecture
 
@@ -46,9 +52,10 @@ Key boundaries:
 | Measure | Current value |
 | --- | --- |
 | Approved vector Processing operations | 18 |
-| Deterministic tests | 31 |
+| Deterministic tests | 43 |
+| Provider response fixtures | 4 across golden, adversarial, and failure sets |
 | Live QGIS runtime validated | QGIS 4.2.0 on macOS |
-| Verified live Processing path | `native:buffer` to a valid output layer |
+| Verified live QGIS paths | `native:buffer` execution and dock/Model Designer lifecycle |
 
 ## Development
 

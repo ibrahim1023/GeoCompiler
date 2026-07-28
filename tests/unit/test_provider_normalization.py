@@ -1,8 +1,14 @@
 from __future__ import annotations
 
+from pathlib import Path
+
 import pytest
 
-from geocompiler.provider import build_provider_request, parse_provider_response
+from geocompiler.provider import (
+    build_provider_request,
+    evaluate_fixture_directory,
+    parse_provider_response,
+)
 from geocompiler.qgis import LayerKind, LayerSummary, ProjectContext
 from geocompiler.workflow import WorkflowIR, WorkflowPatch
 
@@ -82,3 +88,13 @@ def test_parse_provider_response_rejects_invalid_or_unsafe_artifacts() -> None:
         parse_provider_response({"artifact": "workflow", "payload": unsafe})
     with pytest.raises(ValueError, match="valid JSON"):
         parse_provider_response("not-json")
+
+
+def test_provider_fixture_replay_has_expected_outcomes() -> None:
+    fixture_directory = Path(__file__).parents[1] / "fixtures" / "provider"
+
+    results = evaluate_fixture_directory(fixture_directory)
+
+    assert len(results) == 4
+    assert all(result.passed for result in results)
+    assert {result.category for result in results} == {"golden", "adversarial", "failure"}

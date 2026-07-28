@@ -1,0 +1,10 @@
+{
+  "name": "failure extra envelope field",
+  "category": "failure",
+  "expected": "reject",
+  "response": {
+    "artifact": "patch",
+    "payload": {"workflow_id": "buffer-roads", "base_version": "1.0", "summary": "No change", "operations": []},
+    "command": "import os"
+  }
+}

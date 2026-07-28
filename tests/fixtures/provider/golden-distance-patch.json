@@ -1,0 +1,14 @@
+{
+  "name": "golden distance patch",
+  "category": "golden",
+  "expected": "accept",
+  "response": {
+    "artifact": "patch",
+    "payload": {
+      "workflow_id": "buffer-roads",
+      "base_version": "1.0",
+      "summary": "Change buffer distance",
+      "operations": [{"type": "update_step", "target_id": "buffer", "payload": {"parameters": {"DISTANCE": 1000}}}]
+    }
+  }
+}

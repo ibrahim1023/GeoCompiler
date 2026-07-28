@@ -2,7 +2,7 @@
 
 ## Current Phase
 
-Phase 2 is complete. Phase 3 TASK-005 is ready to begin.
+Phase 3 implementation is complete and awaiting independent review approval.
 
 ## Completed
 
@@ -31,6 +31,14 @@ Phase 2 is complete. Phase 3 TASK-005 is ready to begin.
 - Metric compilation requires an explicit semantic-workflow-input to project-layer
   binding, which verifies bound geometry and projected CRS evidence before an
   approved algorithm can run.
+- TASK-005 implementation: a native PyQt dock supports intent entry, structured
+  Workflow IR inspection, explicit approval before Run becomes available,
+  mapped status/errors, plugin lifecycle ownership, and access to QGIS
+  Processing Model Designer.
+- TASK-006 implementation: provider requests remain metadata-only, provider
+  responses accept only strict Workflow IR or atomic Workflow Patch envelopes,
+  and fixture replay validates golden, adversarial, and schema-failure cases
+  without a provider, compiler, or QGIS call.
 
 ## Important Decisions
 
@@ -41,8 +49,8 @@ Phase 2 is complete. Phase 3 TASK-005 is ready to begin.
 
 ## Known Limits and Risks
 
-- No PyQGIS plugin packaging, UI, provider adapter, CI, type checker, or
-  evaluation suite exists yet.
+- Plugin packaging metadata, a configured provider implementation, execution
+  orchestration, CI, and a type checker are not established yet.
 - QGIS 4.2.0 on macOS is the supported local Phase 2 smoke runtime. Its cask
   bundles a Pydantic source/core patch mismatch and no pytest package, so the
   documented smoke script contains a test-only compatibility bootstrap; a
@@ -62,6 +70,11 @@ Phase 2 is complete. Phase 3 TASK-005 is ready to begin.
   inspected an in-memory projected line layer, and the approved
   `native:buffer` runner returned a valid one-feature output layer.
 - Human review approval for TASK-003 and TASK-004 was received on 2026-07-27.
+- Phase 3 deterministic verification passed: 43 tests with 2 expected
+  QGIS-runtime skips, Ruff, formatting, and Python compilation.
+- QGIS 4.2.0 dock smoke passed on 2026-07-28: plugin lifecycle, workflow
+  approval gate, and QGIS Processing Model Designer launch/cleanup were
+  verified with `scripts/qgis_dock_widget_smoke.py`.
 
 ## Blocker
 
@@ -69,5 +82,5 @@ None.
 
 ## Next Task and Role
 
-Assign TASK-005 to an implementer on a new Phase 3 branch: build the native
-PyQt dock widget for workflow proposal inspection and explicit approval.
+Request independent review for TASK-005 and TASK-006. After approval, merge the
+tested Phase 3 branch into `development`; leave `main` unchanged.
