@@ -2,8 +2,8 @@
 
 ## Current Phase
 
-Phase 4 verification is accepted. Phase 5 packaging and portable-runtime work is
-ready to begin.
+Phase 5 portable runtime and package verification is complete and awaiting
+review approval.
 
 ## Completed
 
@@ -11,7 +11,7 @@ ready to begin.
 - Foundation design approved: native PyQt/PyQGIS dock widget; QGIS Processing
   remains the full model editor.
 - Architecture, interfaces, root agent rules, and typed-IR registry ADR created.
-- TASK-001 implemented: pure-Python Pydantic Workflow IR, JSON serialization,
+- TASK-001 implemented: pure-Python Workflow IR, JSON serialization,
   graph invariants, and unit tests.
 - TASK-002 implemented: 18-operation vector-first algorithm registry,
   deterministic geometry/parameter/CRS compatibility validation, and contract
@@ -40,6 +40,13 @@ ready to begin.
   responses accept only strict Workflow IR or atomic Workflow Patch envelopes,
   and fixture replay validates golden, adversarial, and schema-failure cases
   without a provider, compiler, or QGIS call.
+- TASK-008 implementation: runtime artifacts now use frozen standard-library
+  dataclasses, explicit validators, deterministic JSON codecs, and a strict
+  provider response schema. Pydantic and Pydantic Core are absent from runtime,
+  tests, smoke scripts, and project dependencies.
+- TASK-009 implementation: QGIS packaging now has repository metadata, GPL-3.0
+  licensing, icon, user README, deterministic ZIP build/validation scripts, and
+  an archive root that imports as `geocompiler` without dependency installation.
 
 ## Important Decisions
 
@@ -52,10 +59,9 @@ ready to begin.
 
 - Plugin packaging metadata, a configured provider implementation, execution
   orchestration, CI, and a type checker are not established yet.
-- QGIS 4.2.0 on macOS is the supported local Phase 2 smoke runtime. Its cask
-  bundles a Pydantic source/core patch mismatch and no pytest package, so the
-  documented smoke script contains a test-only compatibility bootstrap; a
-  packaged plugin must pin its own runtime dependencies.
+- QGIS 4.2.0 on macOS is the supported local smoke runtime. The plugin runtime
+  uses only Python/QGIS/PyQt capabilities and needs no packaged Python
+  dependency installation.
 
 ## Verification and Review
 
@@ -87,6 +93,15 @@ ready to begin.
   orchestration is configured.
 - Phase 4 verifier report was accepted on 2026-07-28. Its connected-flow no-go
   remains open and is the bounded implementation target for Phase 6.
+- Phase 5 deterministic verification passed on 2026-07-28: 48 tests passed,
+  two QGIS-runtime integration tests were skipped outside QGIS, Ruff/format and
+  compilation passed, and the provider evaluator accepted all 6 fixtures.
+- Phase 5 QGIS 4.2.0 smoke verification passed on 2026-07-28 without a Pydantic
+  compatibility bootstrap: `native:buffer`, dock lifecycle/approval, and a
+  clean extracted-archive plugin import all succeeded.
+- Phase 5 archive validation passed on 2026-07-28 for the 86 KB
+  `geocompiler-0.1.0.zip`; it contains metadata, plugin factory, GPL license,
+  icon, README, and source only.
 
 ## Blocker
 
@@ -96,7 +111,7 @@ configured. This is a bounded product follow-up, not a safety bypass.
 
 ## Next Task and Role
 
-Implement TASK-008 and TASK-009: remove runtime Pydantic dependencies and build
-a repository-compliant QGIS plugin archive that installs without Python package
-installation. Do not claim a connected intent-to-output path until TASK-010 and
-TASK-011 have passed live-QGIS verification.
+Review the Phase 5 report. If accepted, begin TASK-010 and TASK-011 on a new
+Phase 6 branch: connect the configured local Ollama provider and controlled dock
+orchestration. Do not claim a connected intent-to-output path until their
+live-QGIS verification passes.
