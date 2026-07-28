@@ -3,12 +3,16 @@
 from __future__ import annotations
 
 from collections.abc import Iterable, Mapping
+from dataclasses import dataclass
 from enum import StrEnum
 from typing import Any
 
-from pydantic import BaseModel, ConfigDict, Field
-
 from geocompiler.workflow.registry import SpatialContext
+from geocompiler.workflow.serialization import (
+    ArtifactValidationError,
+    FrozenArtifact,
+    require_string,
+)
 
 
 class LayerKind(StrEnum):
@@ -18,48 +22,89 @@ class LayerKind(StrEnum):
     RASTER = "raster"
 
 
-class FieldSummary(BaseModel):
+@dataclass(frozen=True)
+class FieldSummary(FrozenArtifact):
     """A field name and provider-declared type, without any field values."""
 
-    model_config = ConfigDict(extra="forbid", frozen=True)
+    name: str
+    type_name: str
 
-    name: str = Field(min_length=1)
-    type_name: str = Field(min_length=1)
+    def __post_init__(self) -> None:
+        require_string(self.name, "field name")
+        require_string(self.type_name, "field type name")
 
 
-class LayerSummary(BaseModel):
+@dataclass(frozen=True)
+class LayerSummary(FrozenArtifact):
     """Safe layer metadata suitable for deterministic validation or providers."""
 
-    model_config = ConfigDict(extra="forbid", frozen=True)
-
-    id: str = Field(min_length=1)
-    name: str = Field(min_length=1)
+    id: str
+    name: str
     kind: LayerKind
     geometry_kind: str | None = None
     crs_auth_id: str | None = None
     is_projected: bool | None = None
     fields: tuple[FieldSummary, ...] = ()
-    feature_count: int | None = Field(default=None, ge=0)
-    selected_feature_count: int | None = Field(default=None, ge=0)
+    feature_count: int | None = None
+    selected_feature_count: int | None = None
+
+    def __post_init__(self) -> None:
+        require_string(self.id, "layer id")
+        require_string(self.name, "layer name")
+        if not isinstance(self.kind, LayerKind):
+            object.__setattr__(self, "kind", LayerKind(self.kind))
+        fields = tuple(
+            item if isinstance(item, FieldSummary) else FieldSummary.from_dict(item)
+            for item in self.fields
+        )
+        object.__setattr__(self, "fields", fields)
+        counts = (
+            ("feature_count", self.feature_count),
+            ("selected_feature_count", self.selected_feature_count),
+        )
+        for label, count in counts:
+            invalid = not isinstance(count, int) or isinstance(count, bool) or count < 0
+            if count is not None and invalid:
+                raise ArtifactValidationError(f"{label} must be a non-negative integer")
 
 
-class ProcessingHistoryEntry(BaseModel):
+@dataclass(frozen=True)
+class ProcessingHistoryEntry(FrozenArtifact):
     """A safe summary of a Processing operation, never its Python command."""
 
-    model_config = ConfigDict(extra="forbid", frozen=True)
+    algorithm_id: str
+    title: str
 
-    algorithm_id: str = Field(min_length=1)
-    title: str = Field(min_length=1)
+    def __post_init__(self) -> None:
+        require_string(self.algorithm_id, "history algorithm id")
+        require_string(self.title, "history title")
 
 
-class ProjectContext(BaseModel):
+@dataclass(frozen=True)
+class ProjectContext(FrozenArtifact):
     """The metadata-only project view used by GeoCompiler boundaries."""
-
-    model_config = ConfigDict(extra="forbid", frozen=True)
 
     layers: tuple[LayerSummary, ...] = ()
     selected_layer_ids: tuple[str, ...] = ()
     processing_history: tuple[ProcessingHistoryEntry, ...] = ()
+
+    def __post_init__(self) -> None:
+        layers = tuple(
+            item if isinstance(item, LayerSummary) else LayerSummary.from_dict(item)
+            for item in self.layers
+        )
+        selected_layer_ids = tuple(
+            require_string(item, "selected layer id") for item in self.selected_layer_ids
+        )
+        processing_history = tuple(
+            item
+            if isinstance(item, ProcessingHistoryEntry)
+            else ProcessingHistoryEntry.from_dict(item)
+            for item in self.processing_history
+        )
+        object.__setattr__(self, "layers", layers)
+        object.__setattr__(self, "selected_layer_ids", selected_layer_ids)
+        object.__setattr__(self, "processing_history", processing_history)
 
     def spatial_context(self) -> SpatialContext:
         """Return only CRS evidence needed by deterministic workflow validation."""

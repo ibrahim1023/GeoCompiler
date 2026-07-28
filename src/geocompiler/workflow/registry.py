@@ -3,9 +3,8 @@
 from __future__ import annotations
 
 from collections.abc import Iterable
+from dataclasses import dataclass, field
 from enum import StrEnum
-
-from pydantic import BaseModel, ConfigDict, Field
 
 from geocompiler.workflow.errors import CompatibilityError, UnsupportedOperationError
 from geocompiler.workflow.models import (
@@ -14,6 +13,11 @@ from geocompiler.workflow.models import (
     WorkflowIR,
     WorkflowStep,
     value_matches_parameter_kind,
+)
+from geocompiler.workflow.serialization import (
+    ArtifactValidationError,
+    FrozenArtifact,
+    require_string,
 )
 
 
@@ -25,34 +29,67 @@ class OutputGeometryKind(StrEnum):
     SAME_AS_INPUT = "same_as_input"
 
 
-class ParameterDefinition(BaseModel):
+@dataclass(frozen=True)
+class ParameterDefinition(FrozenArtifact):
     """A deterministic requirement for one algorithm parameter."""
-
-    model_config = ConfigDict(extra="forbid", frozen=True)
 
     kind: ParameterKind
     required: bool = True
 
+    def __post_init__(self) -> None:
+        if not isinstance(self.kind, ParameterKind):
+            object.__setattr__(self, "kind", ParameterKind(self.kind))
+        if not isinstance(self.required, bool):
+            raise ArtifactValidationError("parameter definition required must be a boolean")
 
-class AlgorithmDefinition(BaseModel):
+
+@dataclass(frozen=True)
+class AlgorithmDefinition(FrozenArtifact):
     """An allow-listed QGIS Processing operation."""
 
-    model_config = ConfigDict(extra="forbid", frozen=True)
-
-    operation: str = Field(min_length=1)
-    qgis_algorithm_id: str = Field(min_length=1)
+    operation: str
+    qgis_algorithm_id: str
     input_kinds: dict[str, frozenset[GeometryKind]]
     parameters: dict[str, ParameterDefinition]
     output_kinds: dict[str, OutputGeometryKind]
     requires_projected_crs: bool = False
 
+    def __post_init__(self) -> None:
+        require_string(self.operation, "algorithm operation")
+        require_string(self.qgis_algorithm_id, "QGIS algorithm id")
+        input_kinds = {
+            key: frozenset(GeometryKind(kind) for kind in value)
+            for key, value in self.input_kinds.items()
+        }
+        parameters = {
+            key: value
+            if isinstance(value, ParameterDefinition)
+            else ParameterDefinition.from_dict(value)
+            for key, value in self.parameters.items()
+        }
+        output_kinds = {
+            key: value if isinstance(value, OutputGeometryKind) else OutputGeometryKind(value)
+            for key, value in self.output_kinds.items()
+        }
+        object.__setattr__(self, "input_kinds", input_kinds)
+        object.__setattr__(self, "parameters", parameters)
+        object.__setattr__(self, "output_kinds", output_kinds)
+        if not isinstance(self.requires_projected_crs, bool):
+            raise ArtifactValidationError("requires_projected_crs must be a boolean")
 
-class SpatialContext(BaseModel):
+
+@dataclass(frozen=True)
+class SpatialContext(FrozenArtifact):
     """CRS properties supplied by a deterministic project-context inspector."""
 
-    model_config = ConfigDict(extra="forbid", frozen=True)
+    projected_references: dict[str, bool] = field(default_factory=dict)
 
-    projected_references: dict[str, bool] = Field(default_factory=dict)
+    def __post_init__(self) -> None:
+        if not isinstance(self.projected_references, dict) or not all(
+            isinstance(key, str) and isinstance(value, bool)
+            for key, value in self.projected_references.items()
+        ):
+            raise ArtifactValidationError("projected references must map strings to booleans")
 
 
 class AlgorithmRegistry:

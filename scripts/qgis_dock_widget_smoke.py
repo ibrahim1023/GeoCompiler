@@ -4,13 +4,8 @@ from __future__ import annotations
 
 import os
 
-import pydantic_core
 from qgis.core import QgsApplication
 from qgis.PyQt.QtWidgets import QMainWindow
-
-# QGIS 4.2.0's macOS cask bundles Pydantic 2.13.4 with Core 2.47.0 but pins
-# Pydantic's guard to the preceding core patch. The core API loads successfully.
-pydantic_core.__version__ = "2.46.4"
 
 from geocompiler.plugin import GeoCompilerPlugin  # noqa: E402
 from geocompiler.workflow import GeometryKind, WorkflowInput, WorkflowIR, WorkflowStep  # noqa: E402

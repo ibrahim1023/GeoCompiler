@@ -5,6 +5,7 @@ from geocompiler.provider.contracts import (
     ProviderError,
     ProviderRequest,
     ProviderResponse,
+    provider_response_schema,
 )
 from geocompiler.provider.evaluation import (
     EvaluationReport,
@@ -25,6 +26,7 @@ __all__ = [
     "ProviderError",
     "ProviderRequest",
     "ProviderResponse",
+    "provider_response_schema",
     "build_provider_request",
     "evaluate_fixture",
     "evaluate_fixture_directory",

@@ -63,7 +63,7 @@ def test_apply_patch_adds_parameter_without_mutating_original() -> None:
     )
 
     assert result.workflow.parameters_by_id["distance"].default == 750
-    assert workflow.parameters == []
+    assert workflow.parameters == ()
     assert result.changes == ("add_parameter:distance",)
 
 
@@ -112,7 +112,7 @@ def test_apply_patch_is_atomic_when_a_later_operation_is_invalid() -> None:
     with pytest.raises(WorkflowError, match="unknown step: missing"):
         apply_patch(workflow, patch)
 
-    assert workflow.parameters == []
+    assert workflow.parameters == ()
     assert workflow.step_ids == ("buffer",)
 
 

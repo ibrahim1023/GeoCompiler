@@ -3,9 +3,8 @@
 from __future__ import annotations
 
 from collections.abc import Callable, Mapping
+from dataclasses import dataclass
 from typing import Any
-
-from pydantic import BaseModel, ConfigDict, Field, JsonValue
 
 from geocompiler.qgis.context import ProjectContext
 from geocompiler.workflow.errors import CompatibilityError, CompilerError, ExecutionError
@@ -15,46 +14,82 @@ from geocompiler.workflow.registry import (
     SpatialContext,
     default_algorithm_registry,
 )
+from geocompiler.workflow.serialization import (
+    ArtifactValidationError,
+    FrozenArtifact,
+    JsonValue,
+    require_string,
+    validate_json_value,
+)
 
 
-class CompiledParameter(BaseModel):
+@dataclass(frozen=True)
+class CompiledParameter(FrozenArtifact):
     """A workflow parameter available to the controlled execution boundary."""
 
-    model_config = ConfigDict(extra="forbid", frozen=True)
-
-    id: str = Field(min_length=1)
+    id: str
     kind: ParameterKind
     default: JsonValue
 
+    def __post_init__(self) -> None:
+        require_string(self.id, "compiled parameter id")
+        if not isinstance(self.kind, ParameterKind):
+            object.__setattr__(self, "kind", ParameterKind(self.kind))
+        object.__setattr__(
+            self, "default", validate_json_value(self.default, "compiled parameter default")
+        )
 
-class CompiledStep(BaseModel):
+
+@dataclass(frozen=True)
+class CompiledStep(FrozenArtifact):
     """A registry-approved QGIS Processing call with symbolic references."""
 
-    model_config = ConfigDict(extra="forbid", frozen=True)
-
-    id: str = Field(min_length=1)
-    qgis_algorithm_id: str = Field(min_length=1)
+    id: str
+    qgis_algorithm_id: str
     inputs: dict[str, str]
     parameters: dict[str, JsonValue]
     outputs: dict[str, str]
 
+    def __post_init__(self) -> None:
+        require_string(self.id, "compiled step id")
+        require_string(self.qgis_algorithm_id, "compiled QGIS algorithm id")
+        references = [*self.inputs.items(), *self.outputs.items()]
+        if not all(isinstance(key, str) and isinstance(value, str) for key, value in references):
+            raise ArtifactValidationError("compiled step references must be strings")
+        parameters = {
+            key: validate_json_value(value, "compiled step parameters")
+            for key, value in self.parameters.items()
+        }
+        object.__setattr__(self, "parameters", parameters)
 
-class CompiledWorkflow(BaseModel):
+
+@dataclass(frozen=True)
+class CompiledWorkflow(FrozenArtifact):
     """An executable plan whose operations have passed the approved registry."""
 
-    model_config = ConfigDict(extra="forbid", frozen=True)
-
-    workflow_id: str = Field(min_length=1)
+    workflow_id: str
     input_ids: tuple[str, ...]
     parameters: tuple[CompiledParameter, ...]
     steps: tuple[CompiledStep, ...]
     outputs: dict[str, str]
 
+    def __post_init__(self) -> None:
+        require_string(self.workflow_id, "compiled workflow id")
+        parameters = tuple(
+            item if isinstance(item, CompiledParameter) else CompiledParameter.from_dict(item)
+            for item in self.parameters
+        )
+        steps = tuple(
+            item if isinstance(item, CompiledStep) else CompiledStep.from_dict(item)
+            for item in self.steps
+        )
+        object.__setattr__(self, "parameters", parameters)
+        object.__setattr__(self, "steps", steps)
 
-class WorkflowExecutionResult(BaseModel):
+
+@dataclass(frozen=True)
+class WorkflowExecutionResult(FrozenArtifact):
     """References produced by the QGIS Processing runner."""
-
-    model_config = ConfigDict(extra="forbid", frozen=True, arbitrary_types_allowed=True)
 
     outputs: dict[str, Any]
     step_outputs: dict[str, dict[str, Any]]
